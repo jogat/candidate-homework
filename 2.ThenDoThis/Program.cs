@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace _2.Puzzle.Medium
 {
@@ -76,6 +77,62 @@ namespace _2.Puzzle.Medium
             var output = new List<List<string>>();
 
             // YOUR CODE GOES HERE
+
+            var anagrams = new List<string>();
+            var anagrams_heler = new List<string>();
+            var not_anagrams = new List<string>();
+
+
+            input.OrderBy(s => s);
+
+            foreach (string current_word in input)
+            {
+                if (current_word == null || current_word.Trim().Length == 0)
+                {
+                    continue;
+                }
+                var word = current_word.Trim();
+
+                var filtered_words = input.Where(w => w != word).ToArray();
+                var isAnagram = false;
+
+                foreach (string current_w in filtered_words)
+                {
+
+                    if (current_w == null || current_w.Trim().Length == 0)
+                    {
+                        continue;
+                    }
+
+                    var w = current_w.Trim();
+
+                    var charsA = word.ToLower().ToArray().Where(c => c >= 'a' && c <= 'z');
+                    var charsB = w.ToLower().ToArray().Where(c => c >= 'a' && c <= 'z');
+                    isAnagram = charsA.OrderBy(c => c).SequenceEqual(charsB.OrderBy(c => c));
+
+                    if (isAnagram && !anagrams_heler.Contains(word) && !anagrams_heler.Contains(w))
+                    {
+                        anagrams_heler.Add(word);
+                        anagrams_heler.Add(w);
+                        anagrams.Add($"{word},{w}");
+                        continue;
+                    }
+                }
+
+                if (!isAnagram)
+                {
+                    not_anagrams.Add(word);
+                }
+
+            }
+
+            not_anagrams = not_anagrams.Except(anagrams_heler).Distinct().ToList();
+
+            anagrams = anagrams.Concat(not_anagrams).ToList();
+            anagrams.Sort((x, y) => string.Compare(x, y));
+
+
+            output.Add(anagrams);
 
             return output;
         }
